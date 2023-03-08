@@ -39,8 +39,10 @@ jobs:
           cd ${{secrets.SCRIPT_REPO}}
           python call.py $ID $KEY
       - name: Push new refresh_token to script repo if refreshed
-        if: ${{exists('refreshed')}} # 更新了 refresh_token 时才需要 push
+        # 更新了 refresh_token 时才需要 push
         run: |
-          git add token.json
-          git commit -m "Refresh the refresh_token"
-          git push -u origin main:main
+          if test -f refreshed; then
+            git add token.json
+            git commit -m "Refresh the refresh_token"
+            git push -u origin main
+          fi
