@@ -1,0 +1,46 @@
+name: Call APIs
+run-name: Call APIs by @${{ github.actor }}
+
+on: # 定义触发工作流的事件
+  push: # 推送到指定分支时运行
+    branches:
+      - master
+      - main
+  schedule:
+    # Minute - Hour - DayOfMonth - Month - DayOfWeek
+    #  0~59  - 0~23 -    1~31    - 1~12  -    0~6
+    - cron: "0 9,14,19 * * 1-6"
+  watch:
+    types: [started] # 加星星立刻运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Pull main scripts from private repo
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@icloud.com"
+          git clone https://${{secrets.GITHUB_TOKEN}}@github.com/${{github.actor}}/${{secrets.SCRIPT_REPO}}.git
+      - name: Set up Python
+        env:
+          PYTHON_VERSION: "3.9"
+        uses: actions/setup-python@main
+        with:
+          python-version: ${{env.PYTHON_VERSION}}
+      - name: Install requests
+        run: pip install -r requirements.txt
+      - name: Run script to call APIs
+        env:
+          ID: ${{secrets.ID}}
+          KEY: ${{secrets.KEY}}
+        run: |
+          cd ${{secrets.SCRIPT_REPO}}
+          python call.py $ID $KEY
+      - name: Push new refresh_token to script repo if refreshed
+        if: ${{exists('refreshed')}} # 更新了 refresh_token 时才需要 push
+        run: |
+          git add token.json
+          git commit -m "Refresh the refresh_token"
+          git push -u origin main:main
