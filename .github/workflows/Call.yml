@@ -19,11 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: Clone main scripts from private repo
-        uses: GuillaumeFalourd/clone-github-repo-action@main
+        # uses: GuillaumeFalourd/clone-github-repo-action@main
+        # with:
+        #   owner: "${{ github.actor }}"
+        #   repository: "${{ secrets.SCRIPT_REPO }}"
+        #   access-token: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@main
         with:
-          owner: "${{ github.actor }}"
-          repository: "${{ secrets.SCRIPT_REPO }}"
-          access-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: "${{ github.actor }}/${{ secrets.SCRIPT_REPO }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Python
         env:
           PYTHON_VERSION: "3.9"
