@@ -38,9 +38,16 @@ jobs:
         env:
           ID: ${{secrets.ID}}
           KEY: ${{secrets.KEY}}
+          MAIL_TO: ${{secrets.MAIL_TO}}
+          TG_BOT_TOKEN: ${{secrets.TG_TOKEN}}
+          TG_CHAT_ID: ${{secrets.TG_ID}}
         run: |
           cd ${{secrets.SCRIPT_REPO}}
-          python call.py $ID $KEY
+          if [ -z "$TG_BOT_TOKEN" ] || [ -z "$TG_CHAT_ID" ]; then
+            python call.py $ID $KEY $MAIL_TO
+          else
+            python call.py $ID $KEY $MAIL_TO $TG_BOT_TOKEN $TG_CHAT_ID
+          fi
       - name: Push new refresh_token to script repo if refreshed
         # 更新了 refresh_token 时才需要 push
         # todo:测试能够正常push新token
