@@ -28,6 +28,7 @@ jobs:
         with:
           repository: "${{ github.actor }}/${{ secrets.SCRIPT_REPO }}"
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: "main" # set branch name instead of default name 'master'
       - name: Set up Python
         env:
           PYTHON_VERSION: "3.9"
