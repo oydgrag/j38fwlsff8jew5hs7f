@@ -9,15 +9,12 @@ on: # 定义触发工作流的事件
   schedule:
     # Minute - Hour - DayOfMonth - Month - DayOfWeek
     #  0~59  - 0~23 -    1~31    - 1~12  -    0~6
-    - cron: "0 9,14,19 * * 1-6"
+    - cron: "17 9,14,19 * * 1-6"
   watch:
     types: [started] # 加星星立刻运行
 
 jobs:
   build:
-    # permissions:
-    #   contents: read
-    #   pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
@@ -50,7 +47,7 @@ jobs:
           fi
       - name: Push new refresh_token to script repo if refreshed
         # 更新了 refresh_token 时才需要 push
-        # todo:测试能够正常push新token
+        # todo:测试能否正常push新token
         run: |
           if test -f refreshed; then
             git config user.name ${{ github.actor }}
